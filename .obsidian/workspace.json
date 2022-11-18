@@ -1,0 +1,151 @@
+{
+  "main": {
+    "id": "00fc814961424cf2",
+    "type": "split",
+    "children": [
+      {
+        "id": "ebcc469054ea6776",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b2c4db6f3046b71b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "content/notes/Fix issues.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "7261dface2aca922",
+    "type": "split",
+    "children": [
+      {
+        "id": "a6c4ff731db205c3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2edc7040638f3d0a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "7f1d03c65d4ede37",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "af49c3244a0ddeb7",
+            "type": "leaf",
+            "state": {
+              "type": "starred",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "e3cabec74ea43022",
+    "type": "split",
+    "children": [
+      {
+        "id": "d29f351ee202430d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3b4469600d24b8f8",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "content/notes/Fix issues.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "d6ceff40a7508ce0",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "content/notes/Fix issues.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "039478de74c52fbe",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "42b52d04cdf794df",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "content/notes/Fix issues.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "active": "b2c4db6f3046b71b",
+  "lastOpenFiles": [
+    "content/notes/gRPC CLI.md",
+    "content/notes/Fix issues.md",
+    "content/notes/Fault tolerance.md",
+    "content/notes/Event Sourcing.md",
+    "content/notes/Dual writes.md",
+    "content/notes/Event base - Choreography.png",
+    "content/notes/editing.md",
+    "content/notes/Domain Events.md",
+    "content/notes/Design data intensive application.md",
+    "content/notes/Database per Service.md"
+  ]
+}
