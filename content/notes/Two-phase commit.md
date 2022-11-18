@@ -32,10 +32,10 @@ COMMIT;
 > What happens when user was charged but order is not created?
 
 ### Distributed  Transaction
-- [[Two-phase commit]]
-- [[Three phase commit]]
-- [[SAGA pattern with Orchestrator and Choreography]]
-- [[Parallel Pipeline]]
+- [[notes/Two-phase commit]]
+- [[notes/Three phase commit]]]
+- [[notes/SAGA pattern with Orchestrator and Choreography]]
+- [[notes/Parallel Pipeline]]
 
 ##### Crazy ideas
 - Single database
@@ -79,6 +79,6 @@ If all local transaction are successfully committed, Coordinator could finish it
 
 #### Drawback
 - **Latency**: Coordinator needs to wait replies from all microservices to decide what to do next. All transactions need to be a [[Pessimistic lock]]
-- **Coordinator** is a [[Single point of failure]], all transactions will be locked until the coordinator is back.
+- **Coordinator** is a [[notes/Single point of failure]], all transactions will be locked until the coordinator is back.
 - **Transaction dependency**: all local transactions will be dependent on each other, a transaction needs to wait until the last responses, `resource leak` might happen.
 - **Eventually Consistency**: there is a latency between microservices, so it isn't _really_ consistency.
