@@ -8,10 +8,10 @@
 - [[Single point of failure]]
 - [[Bottle neck]]/Latency
 
-![[Orchestrator service.png]]
+![[content/notes/images/Orchestrator service.png]]
 ### Choreography: Event based
 > cho·re·og·ra·phy (Definition: The sequence of steps and movements in dance or figure skating, especially in a ballet or other staged dance.)
-![[Event base - Choreography.png]]
+![[content/notes/images/Event base - Choreography.png]]
 
 #### Pros
 - No extra service / Simplicity

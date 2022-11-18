@@ -13,13 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "content/notes/Fix issues.md",
+                "file": "content/notes/SSTable.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "ed9901a883deba26",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "content/notes/Replication.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "content/notes/Fix issues.md",
+                "file": "content/notes/Replication.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "content/notes/Fix issues.md",
+                "file": "content/notes/Replication.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "content/notes/Fix issues.md"
+                "file": "content/notes/Replication.md"
               }
             }
           }
@@ -135,17 +148,17 @@
     "direction": "horizontal",
     "width": 300
   },
-  "active": "b2c4db6f3046b71b",
+  "active": "ed9901a883deba26",
   "lastOpenFiles": [
-    "content/notes/gRPC CLI.md",
+    "content/notes/images/Synchronous-replication.png",
+    "content/notes/Replication.md",
+    "content/notes/images/leader-and-followers.png",
+    "content/notes/images/Spring's basic functional area.png",
+    "asdadada.md",
+    "content/notes/SSTable.md",
+    "content/notes/AVL Tree.md",
     "content/notes/Fix issues.md",
-    "content/notes/Fault tolerance.md",
-    "content/notes/Event Sourcing.md",
-    "content/notes/Dual writes.md",
-    "content/notes/Event base - Choreography.png",
-    "content/notes/editing.md",
-    "content/notes/Domain Events.md",
-    "content/notes/Design data intensive application.md",
-    "content/notes/Database per Service.md"
+    "content/notes/gRPC CLI.md",
+    "content/notes/Fault tolerance.md"
   ]
 }

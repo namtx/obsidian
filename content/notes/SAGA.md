@@ -1,5 +1,5 @@
 # SAGA
-![[SAGA.png]]
+![[content/notes/images/SAGA.png]]
 
 ### Two ways of coordination SAGA
 There are two ways of coordination sagas:

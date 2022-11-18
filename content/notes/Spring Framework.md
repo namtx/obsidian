@@ -2,7 +2,7 @@
 
 # Spring framework
 
-![[Spring's basic functional area.png]]
+![[content/notes/images/Spring's basic functional area.png]]
 
 ### The Core Spring Container
 
