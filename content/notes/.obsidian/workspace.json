@@ -1,22 +1,18 @@
 {
   "main": {
-    "id": "00fc814961424cf2",
+    "id": "e87e1a9790aac155",
     "type": "split",
     "children": [
       {
-        "id": "ebcc469054ea6776",
+        "id": "b0b84f3948146ddf",
         "type": "tabs",
         "children": [
           {
-            "id": "b2c4db6f3046b71b",
+            "id": "9827731e15bfa6a8",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "content/notes/Replication.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -25,15 +21,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "7261dface2aca922",
+    "id": "25d80baf79273c9b",
     "type": "split",
     "children": [
       {
-        "id": "a6c4ff731db205c3",
+        "id": "e6403e5029cddcf2",
         "type": "tabs",
         "children": [
           {
-            "id": "2edc7040638f3d0a",
+            "id": "8e2083d7f6f11670",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -43,12 +39,12 @@
             }
           },
           {
-            "id": "7f1d03c65d4ede37",
+            "id": "fa181ba3daca52b7",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#master",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -58,35 +54,33 @@
             }
           },
           {
-            "id": "af49c3244a0ddeb7",
+            "id": "8666462fee180030",
             "type": "leaf",
             "state": {
               "type": "starred",
               "state": {}
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
     "width": 300
   },
   "right": {
-    "id": "e3cabec74ea43022",
+    "id": "1777eb8d46834282",
     "type": "split",
     "children": [
       {
-        "id": "d29f351ee202430d",
+        "id": "9a207b87ecee2832",
         "type": "tabs",
         "children": [
           {
-            "id": "3b4469600d24b8f8",
+            "id": "68c05b2472b076ff",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "content/notes/Replication.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -98,19 +92,18 @@
             }
           },
           {
-            "id": "d6ceff40a7508ce0",
+            "id": "a742ec63c6264578",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "content/notes/Replication.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "039478de74c52fbe",
+            "id": "91c788907f55889c",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -121,32 +114,31 @@
             }
           },
           {
-            "id": "42b52d04cdf794df",
+            "id": "10d37a5e8700a849",
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "content/notes/Replication.md"
-              }
+              "state": {}
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
     "width": 300
   },
-  "active": "b2c4db6f3046b71b",
+  "active": "9827731e15bfa6a8",
   "lastOpenFiles": [
-    "content/notes/SSTable.md",
-    "notes/images/leader-and-followers.png.md",
-    "content/notes/Replication.md",
-    "content/notes/images/Synchronous-replication.png",
-    "content/notes/images/leader-and-followers.png",
-    "content/notes/images/Spring's basic functional area.png",
-    "asdadada.md",
-    "content/notes/AVL Tree.md",
-    "content/notes/Fix issues.md",
-    "content/notes/gRPC CLI.md"
+    "Replication.md",
+    "Red-black tree.md",
+    "SAGA.md",
+    "SAGA pattern with Orchestrator and Choreography.md",
+    "Service Account Token Volume Projection.md",
+    "Service-to-Service Authentication.md",
+    "Single point of failure.md",
+    "Spring Framework.md",
+    "SSTable.md",
+    "Three phase commit.md"
   ]
 }

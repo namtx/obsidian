@@ -1,5 +1,8 @@
+---
+title: "SAGA"
+---
 # SAGA
-![[content/notes/images/SAGA.png]]
+![[notes/images/SAGA.png]]
 
 ### Two ways of coordination SAGA
 There are two ways of coordination sagas:

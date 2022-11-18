@@ -1,8 +1,10 @@
-
+---
+title: "Spring Framework"
+---
 
 # Spring framework
 
-![[content/notes/images/Spring's basic functional area.png]]
+![[notes/images/Spring's basic functional area.png]]
 
 ### The Core Spring Container
 

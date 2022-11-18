@@ -1,3 +1,6 @@
+---
+title: "Tools"
+---
 Zero cost, no code checklist for pre-launch startups:
 - Typedream to build the landing page
 - Copy.ai to produce text for landing page

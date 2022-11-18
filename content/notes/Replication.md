@@ -2,7 +2,7 @@
 title: "Replication"
 ---
 
-![[content/notes/images/leader-and-followers.png]]
+![[notes/images/leader-and-followers.png]]
 
 ### Leader and followers
 - _leader_ ( #master or primary) - when clients want to write to database, they must send their requests to the leader, which first writes data to its local storage.
@@ -10,7 +10,7 @@ title: "Replication"
 
 ### Synchronous and Asynchronous Replication
 ##### Synchronous
-![[content/notes/images/Synchronous-replication.png]]
+![[notes/images/Synchronous-replication.png]]
 
 Pros:
 - the #follower is guaranteed to have an up-to-date copy of data that is consistent with the #leader
@@ -22,7 +22,7 @@ Cons:
 - any one node outage would cause the whole system down. In practice, if you enable #synchronous replication on a database, it usually means that one of the followers is #synchronous, and the others are #asynchronous, it is called #semi-synchronous
 
 ##### Asynchronous
-![[content/notes/images/Asynchronous.png]]
+![[notes/images/Asynchronous.png]]
 - widely used even weakening durability
 
 ### Setting up new Followers
