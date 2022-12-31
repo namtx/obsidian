@@ -1,0 +1,383 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="Working with Processes Primer System calls The kernel of your Unix system sits atop the hardware of your computer.
+It’s the middle man for any interactions that need to happen with the hardware."><title>Working with Processes</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://namtx.dev/obsidian/icon.png><link href=https://namtx.dev/obsidian/styles.6d35b443b4f220f750e7bcd3c17d1fcf.min.css rel=stylesheet><link href=https://namtx.dev/obsidian/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://namtx.dev/obsidian/js/darkmode.1570d5f00831d9316bf7061016ff1e3a.min.js></script>
+<script src=https://namtx.dev/obsidian/js/util.9825137f5e7825e8553c68ce39ac9e44.min.js></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/copy-tex.min.js integrity=sha384-ww/583aHhxWkz5DEVn6OKtNiIaLi2iBRNZXfJRiY1Ai7tnJ9UXpEsyvOITVpTl4A crossorigin=anonymous></script>
+<script src=https://unpkg.com/@floating-ui/core@0.7.3></script>
+<script src=https://unpkg.com/@floating-ui/dom@0.5.4></script>
+<script src=https://namtx.dev/obsidian/js/popover.9b72b70bd35617d0635e9d15463662b2.min.js></script>
+<script src=https://namtx.dev/obsidian/js/code-title.b35124ad8db0ba37162b886afb711cbc.min.js></script>
+<script src=https://namtx.dev/obsidian/js/clipboard.c20857734e53a3fb733b7443879efa61.min.js></script>
+<script src=https://namtx.dev/obsidian/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
+<script>const BASE_URL="https://namtx.dev/obsidian",fetchData=Promise.all([fetch("https://namtx.dev/obsidian/indices/linkIndex.310f331789e0c48725eec3f274a59101.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://namtx.dev/obsidian/indices/contentIndex.c0d2f9631189a1728bd60fbbc7feef4d.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://namtx.dev/obsidian",!0,!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://namtx.dev/obsidian",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+    import { attachSPARouting } from "https:\/\/namtx.dev\/obsidian\/js\/router.9d4974281069e9ebb189f642ae1e3ca2.min.js"
+    attachSPARouting(init, render)
+  </script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-XYFD95KB4J"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-XYFD95KB4J",{anonymize_ip:!1})}</script><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
+<script defer src=https://namtx.dev/obsidian/js/full-text-search.24827f874defbbc6d529926cbfcfb493.min.js></script><div class=singlePage><header><h1 id=page-title><a href=https://namtx.dev/obsidian><svg viewBox="0 0 100 100" width="30" height="30"><defs><linearGradient id="a" x1="82.85" y1="30.41" x2="51.26" y2="105.9" gradientTransform="matrix(1, 0, 0, -1, -22.41, 110.97)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6c56cc"/><stop offset="1" stop-color="#9785e5"/></linearGradient></defs><polygon points="44.61 0 12.91 17.52 0 45.45 19.57 90.47 47.35 100 52.44 89.8 63 26.39 44.61 0" fill="#34208c"/><polygon points="63 26.39 43.44 14.41 16.43 35.7 47.35 100 52.44 89.8 63 26.39" fill="url(#a)"/><polygon points="63 26.39 63 26.39 44.61 0 43.44 14.41 63 26.39" fill="#af9ff4"/><polygon points="43.44 14.41 44.61 0 12.91 17.52 16.43 35.7 43.44 14.41" fill="#4a37a0"/><polygon points="16.43 35.7 19.57 90.47 47.35 100 16.43 35.7" fill="#4a37a0"/></svg>Obsidian</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
+<label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><h1>Working with Processes</h1><p class=meta>Last updated
+Dec 31, 2022</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><ol><li><a href=#working-with-processes>Working with Processes</a></li></ol></li></ol></nav></details></aside><a href=#working-with-processes><h3 id=working-with-processes><span class=hanchor arialabel=Anchor># </span>Working with Processes</h3></a><a href=#primer><h4 id=primer><span class=hanchor arialabel=Anchor># </span>Primer</h4></a><a href=#system-calls><h5 id=system-calls><span class=hanchor arialabel=Anchor># </span>System calls</h5></a><p>The kernel of your Unix system sits atop the hardware of your computer.</p><p>It’s the middle man for any interactions that need to happen with the hardware.</p><p>This include things like writing/reading from the filesystem, sending data over the network, allocating memory, or playing audio over the speakers.</p><p>Given its power, programs are not allowed direct access to the kernel. Any communication is done via system calls.</p><p><img src="/obsidian/user application.png" width=auto></p><p>System calls are at the heart of C programming.</p><p>System calls allow you user-space programs to interact indirectly with the hardware of your computer, via the kernel.</p><a href=#processes-the-atoms-of-unix><h5 id=processes-the-atoms-of-unix><span class=hanchor arialabel=Anchor># </span>Processes: The atoms of Unix</h5></a><p>Processes are the building block of a Unix system. Why? Because any <strong>code that executed happens inside a process.</strong></p><p>One process can spawn and manage many others.</p><a href=#processes-have-ids><h4 id=processes-have-ids><span class=hanchor arialabel=Anchor># </span>Processes have IDs</h4></a><p>Every process running on your system has a unique process identifier. Hereby referred to as <code>pid</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>puts</span> <span class=no>Process</span><span class=o>.</span><span class=n>pid</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ irb
+</span></span><span class=line><span class=cl>2.7.2 :001 &gt; Process.pid
+</span></span><span class=line><span class=cl> <span class=o>=</span>&gt; <span class=m>69625</span>
+</span></span><span class=line><span class=cl>2.7.2 :002 &gt;
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ ps aux <span class=p>|</span> grep irb
+</span></span><span class=line><span class=cl>namtx            <span class=m>69633</span>   0.0  0.0 <span class=m>34122844</span>    <span class=m>864</span> s005  S+   12:55PM   0:00.01 grep --color<span class=o>=</span>auto --exclude-dir<span class=o>=</span>.bzr --exclude-dir<span class=o>=</span>CVS --exclude-dir<span class=o>=</span>.git --exclude-dir<span class=o>=</span>.hg --exclude-dir<span class=o>=</span>.svn --exclude-dir<span class=o>=</span>.idea --exclude-dir<span class=o>=</span>.tox irb
+</span></span><span class=line><span class=cl>namtx            <span class=m>69625</span>   0.0  0.1 <span class=m>34249756</span>  <span class=m>22564</span> s002  S+   12:54PM   0:00.79 irb
+</span></span></code></pre></td></tr></table></div></div><a href=#sytem-calls><h5 id=sytem-calls><span class=hanchor arialabel=Anchor># </span>Sytem calls</h5></a><p>Ruby&rsquo;s <code>Process.pid</code> maps to <code>getpid(2)</code>
+There is alos a global variable that holds the value of the current <code>pid</code>. You can access it with <code>$$</code>.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ irb
+</span></span><span class=line><span class=cl>2.7.2 :001 &gt; <span class=nv>$$</span>
+</span></span><span class=line><span class=cl> <span class=o>=</span>&gt; <span class=m>69929</span>
+</span></span><span class=line><span class=cl>2.7.2 :002 &gt;
+</span></span></code></pre></td></tr></table></div></div><a href=#processes-have-parents><h4 id=processes-have-parents><span class=hanchor arialabel=Anchor># </span>Processes have parents</h4></a><p>every process running on your system has a parent process. Each process knows its parent process identifier <code>ppid</code>.
+In the majority of cases the parent process for a given process is the process that invoked it.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ irb
+</span></span><span class=line><span class=cl>2.7.2 :001 &gt;
+</span></span><span class=line><span class=cl>2.7.2 :001 &gt; Process.ppid
+</span></span><span class=line><span class=cl> <span class=o>=</span>&gt; <span class=m>69398</span>
+</span></span><span class=line><span class=cl>2.7.2 :002 &gt;
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>$ ps aux <span class=p>|</span> grep <span class=m>69398</span>
+</span></span><span class=line><span class=cl>namtx            <span class=m>70430</span>   0.0  0.0 <span class=m>34122844</span>    <span class=m>864</span> s003  S+    1:01PM   0:00.01 grep --color<span class=o>=</span>auto --exclude-dir<span class=o>=</span>.bzr --exclude-dir<span class=o>=</span>CVS --exclude-dir<span class=o>=</span>.git --exclude-dir<span class=o>=</span>.hg --exclude-dir<span class=o>=</span>.svn --exclude-dir<span class=o>=</span>.idea --exclude-dir<span class=o>=</span>.tox <span class=m>69398</span>
+</span></span><span class=line><span class=cl>namtx            <span class=m>69398</span>   0.0  0.1 <span class=m>34191384</span>   <span class=m>8408</span> s005  Ss   12:54PM   0:02.76 -zsh
+</span></span></code></pre></td></tr></table></div></div><a href=#in-the-real-world><h5 id=in-the-real-world><span class=hanchor arialabel=Anchor># </span>In the real world</h5></a><p>There aren&rsquo;t a ton of uses for the <code>ppid</code> in the real world. It can be important when detecting deamon processes.</p><a href=#system-calls-1><h5 id=system-calls-1><span class=hanchor arialabel=Anchor># </span>System calls</h5></a><p>Ruby&rsquo;s <code>Process.ppid</code> maps to <code>getppid(2)</code>.</p><a href=#processes-have-file-descriptors><h4 id=processes-have-file-descriptors><span class=hanchor arialabel=Anchor># </span>Processes Have File Descriptors</h4></a><a href=#everything-is-a-file><h5 id=everything-is-a-file><span class=hanchor arialabel=Anchor># </span>Everything is a File</h5></a><p>A part of the Unix philosophy: in the land of Unix <code>everything is a file</code>.
+This means that devices a treated as files, sockets and pipes are treated as files. and files are treated as files.</p><a href=#descriptors-represent-resources><h5 id=descriptors-represent-resources><span class=hanchor arialabel=Anchor># </span>Descriptors represent resources</h5></a><p>Anytime that you open a resource in a running process it is assigned a file descriptor number. File descriptors are not shared between unrelated processes, they live and die with the process they are bound to, just as any open resources for a process are close when it exits.</p><p>In Ruby, open resources are presented by the <code>IO</code> class. Any <code>IO</code> object can have an associated file descriptor number. Use <code>IO#fileno</code> to get access to it.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=n>passwd</span> <span class=o>=</span> <span class=no>File</span><span class=o>.</span><span class=n>open</span><span class=p>(</span><span class=s1>&#39;/etc/passwd&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>puts</span> <span class=n>passwd</span><span class=o>.</span><span class=n>fileno</span>
+</span></span><span class=line><span class=cl><span class=mi>3</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>File descriptor numbers are assigned the lowest unused value.</li><li>Once a resource is closed its file descriptor number becomes available again.</li></ul><p>File descriptors keep track of open resources only. Closed resources are not given a file descriptor number.</p><p>Trying to read file descriptor number from closed resource will raise ans exception:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=n>passwd</span> <span class=o>=</span> <span class=no>File</span><span class=o>.</span><span class=n>open</span><span class=p>(</span><span class=s1>&#39;/etc/passwd&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>puts</span> <span class=n>passwd</span><span class=o>.</span><span class=n>fileno</span> 
+</span></span><span class=line><span class=cl><span class=mi>3</span>
+</span></span><span class=line><span class=cl><span class=n>passwd</span><span class=o>.</span><span class=n>close</span> 
+</span></span><span class=line><span class=cl><span class=nb>puts</span> <span class=n>passwd</span><span class=o>.</span><span class=n>fileno</span>
+</span></span><span class=line><span class=cl><span class=o>-</span><span class=ss>e</span><span class=p>:</span><span class=mi>4</span><span class=ss>:in</span> <span class=sb>`fileno&#39;: closed stream (IOError)
+</span></span></span></code></pre></td></tr></table></div></div><p>You may have notices that when we open a file and ask for its file descriptor number, the lowest value we get is 3. What happend to 0, 1 and 2?</p><a href=#standard-streams><h5 id=standard-streams><span class=hanchor arialabel=Anchor># </span>Standard Streams</h5></a><p>Every Unix process comes with three open resources. These are your standard input (<code>STDIN</code>), standard output (<code>STDOUT</code>) and standard error (<code>STDERR</code>) resources.</p><p>These standard resources exits for a very important reason that we take for granted today. <code>STDIN</code> provides generic way to read input from keyboard devices or pipes, <code>STDOUT</code> and <code>STDERR</code> provide generic way to write output to monitors, files, printers, etc. This was one of innovations of Unix.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>puts</span> <span class=no>STDIN</span><span class=o>.</span><span class=n>fileno</span>
+</span></span><span class=line><span class=cl><span class=mi>0</span>
+</span></span><span class=line><span class=cl><span class=nb>puts</span> <span class=no>STDOUT</span><span class=o>.</span><span class=n>fileno</span>
+</span></span><span class=line><span class=cl><span class=mi>1</span>
+</span></span><span class=line><span class=cl><span class=nb>puts</span> <span class=no>STDERR</span><span class=o>.</span><span class=n>fileno</span>
+</span></span><span class=line><span class=cl><span class=mi>2</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#in-the-real-world-1><h5 id=in-the-real-world-1><span class=hanchor arialabel=Anchor># </span>In the real world</h5></a><p>File descriptors are at the core of network programming using sockets, pipes, etc. and are also at the core of any file system descriptors.</p><a href=#processes-have-resource-limit><h4 id=processes-have-resource-limit><span class=hanchor arialabel=Anchor># </span>Processes Have Resource Limit</h4></a><a href=#finding-the-limit><h5 id=finding-the-limit><span class=hanchor arialabel=Anchor># </span>finding the limit</h5></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>p</span> <span class=no>Process</span><span class=o>.</span><span class=n>getrlimit</span><span class=p>(</span><span class=ss>:NOFILE</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># [256, 9223372036854775807] // [soft_limit, hard_limit]</span>
+</span></span></code></pre></td></tr></table></div></div><p>The soft limit isn&rsquo;t really a limit. Meaning that if you exceed the soft limit (in this case by opening more than 256 resouces at once) an exception will be raised, but you can always change that limit if you want.</p><blockquote><p>hard_limit == Process::RLIM_INFINITY</p></blockquote><p>So any process is able to change its own soft limit, but only superuser can change the hard limit.</p><p>However, you process is also able to bump the hard limit assuming it has the required permissions.</p><p>If you interested in changing the limit at a system-wide level then start by having a look at <code>sysctl(8)</code>.</p><a href=#bump-the-soft-limit><h5 id=bump-the-soft-limit><span class=hanchor arialabel=Anchor># </span>Bump the Soft limit</h5></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=no>Process</span><span class=o>.</span><span class=n>setrlimit</span><span class=p>(</span><span class=ss>:NOFILE</span><span class=p>,</span> <span class=mi>4096</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>p</span> <span class=no>Process</span><span class=o>.</span><span class=n>getrlimit</span><span class=p>(</span><span class=ss>:NOFILE</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># [4096, 4096]</span>
+</span></span></code></pre></td></tr></table></div></div><p>You can see that we set the new limit for the number of open files, and upon asking for that limit again both the hard limit and the soft limit were set to the new value <code>4-96</code>.</p><a href=#exceeding-the-limit><h5 id=exceeding-the-limit><span class=hanchor arialabel=Anchor># </span>Exceeding the limit</h5></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=no>Process</span><span class=o>.</span><span class=n>setrlimit</span><span class=p>(</span><span class=ss>:NOFILE</span><span class=p>,</span> <span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=no>File</span><span class=o>.</span><span class=n>open</span><span class=p>(</span><span class=s1>&#39;/dev/null&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># Errno::EMFILE: Too many open files - /dev/null</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#other-resources><h5 id=other-resources><span class=hanchor arialabel=Anchor># </span>Other resources</h5></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># The maximum number of simultaneous processes </span>
+</span></span><span class=line><span class=cl><span class=c1># allowed for the current user. </span>
+</span></span><span class=line><span class=cl><span class=no>Process</span><span class=o>.</span><span class=n>getrlimit</span><span class=p>(</span><span class=ss>:NPROC</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl><span class=c1># The largest size file that may be created. </span>
+</span></span><span class=line><span class=cl><span class=no>Process</span><span class=o>.</span><span class=n>getrlimit</span><span class=p>(</span><span class=ss>:FSIZE</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl><span class=c1># The maximum size of the stack segment of the </span>
+</span></span><span class=line><span class=cl><span class=c1># process. </span>
+</span></span><span class=line><span class=cl><span class=no>Process</span><span class=o>.</span><span class=n>getrlimit</span><span class=p>(</span><span class=ss>:STACK</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#in-the-real-world-2><h5 id=in-the-real-world-2><span class=hanchor arialabel=Anchor># </span>In the real world</h5></a><p>Needing to modify limits for system resources isn&rsquo;t a common need for most programs.</p><p><code>httperf(1)</code> is the http performance tool, and it has to change the soft limit when does something like:
+<code>httperf --hog --server www --num-conn 5000</code></p><a href=#processes-have-an-environment><h4 id=processes-have-an-environment><span class=hanchor arialabel=Anchor># </span>Processes Have an Environment</h4></a><ul><li><p>environment variables</p></li><li><p>Every process inherits ENVs from its parent. They are set by parent process and inherited by its children processes. Environment variables are per-process and are global to each process.</p></li></ul><a href=#its-a-hash-right><h5 id=its-a-hash-right><span class=hanchor arialabel=Anchor># </span>It&rsquo;s a hash, right?</h5></a><p>Although <code>ENV</code> uses the hash-style accessor API, it&rsquo;s not actually a <code>Hash</code>. For instance, it implements <code>Enumerable</code> and some of <code>Hash</code> API, but not all of it.</p><a href=#system-calls-2><h5 id=system-calls-2><span class=hanchor arialabel=Anchor># </span>System calls</h5></a><ul><li><p><code>setenv(3)</code></p></li><li><p><code>getenv(3)</code></p></li><li><p><code>environ(7)</code></p></li></ul><a href=#processes-have-arguments><h4 id=processes-have-arguments><span class=hanchor arialabel=Anchor># </span>Processes Have Arguments</h4></a><p>Every process has access to a special array called <code>ARGV</code>. Other programming languages may implement it slightly differently, but every one has something called <code>argv</code>.
+<code>argv</code> is a short form for <code>argument vector</code>. In other words: a vector, or array, of arguments.</p><a href=#its-an-array><h5 id=its-an-array><span class=hanchor arialabel=Anchor># </span>It&rsquo;s an Array!</h5></a><p><code>ARGV</code> is simply an <code>Array</code>. You can add elements to it, remove elements from it, change the element it contains, whatever you like.</p><p>Some libraries will read from <code>ARGV</code> to parse command line optinos, for example. You can programmatically change <code>ARGV</code> before they have a chance to see it in order to modify the options at runtime.</p><a href=#in-the-real-world-3><h5 id=in-the-real-world-3><span class=hanchor arialabel=Anchor># </span>In the real world</h5></a><ul><li>file names</li><li>parsing command line input. There are many Ruby libraries for dealing with command line input. One called <code>optparse</code> is available as part of the standard library.</li></ul><a href=#processes-have-names><h4 id=processes-have-names><span class=hanchor arialabel=Anchor># </span>Processes Have Names</h4></a><p>Unix processes have very few inherent ways of communicating about their state.
+Programmers have worked around this and invented things like <code>logfiles</code>.
+<code>Logfiles</code> allow processes to communicate anything they want about their state by writing to the filesystem, but this operates at the level of the filesystem rather than being inherent to the process itself.</p><p>Similarly, processes can use the network to open sockets and communicate with other processes. But again, that operates at a different level than the process itself, since it relies on the network.</p><p>There are two mechanisms that operate at the level of process itself that can be used to communicate information. One is the process name, the other is exit codes.</p><a href=#naming-processes><h5 id=naming-processes><span class=hanchor arialabel=Anchor># </span>Naming Processes</h5></a><p>Every process on the system has a name.</p><ul><li><code>$PROGRAM_NAME</code> variable in Ruby
+You can assign a value to ther global variable to change the name of current process.</li></ul><a href=#processes-have-exit-codes><h4 id=processes-have-exit-codes><span class=hanchor arialabel=Anchor># </span>Processes Have Exit Codes</h4></a><p>When a process comes to the end of it has one last chance to make its mark on the world: its <code>exit code</code>.
+Every process that exits does so with a numeric exit code (0-255) denoting whether it exited successfully or with an error.</p><p>Traditionally, a process that exits with an <code>exit code 0 is said to be succesful</code>.
+Any other exit code denotes an error, with different codes poiting to different errors.</p><p>It&rsquo;s usually a good idea to stick with the <code>0 as success</code> exit code tradition so that your program will play nicely with other Unix tools.</p><a href=#how-to-exit-a-process><h5 id=how-to-exit-a-process><span class=hanchor arialabel=Anchor># </span>How to exit a Process</h5></a><ul><li><code>exit</code>, <code>Kernel#exit</code></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>exit</span>
+</span></span></code></pre></td></tr></table></div></div><p>You can pass a custom exit code to this method</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>exit</span> <span class=mi>22</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># When Kernel#exit is invoked, before exiting Ruby invokes any blocks </span>
+</span></span><span class=line><span class=cl><span class=c1># defined by Kernel#at_exit. </span>
+</span></span><span class=line><span class=cl><span class=nb>at_exit</span> <span class=p>{</span> <span class=nb>puts</span> <span class=s1>&#39;Last!&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=nb>exit</span>
+</span></span></code></pre></td></tr></table></div></div><p>will output:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>Last!
+</span></span></span></code></pre></td></tr></table></div></div><ul><li><code>exit!</code></li></ul><p>is almost exactly the same as <code>Kernel#exit</code>, but with two key differences. The first is that it sets unsuccessful status code by default (1), and the second is that it will not invoke any blocks defined using <code>Kernel#at_exit</code></p><ul><li><code>abort</code></li></ul><p><code>Kernel#abort</code> provides a generic way to exit a process unsuccessful. <code>Kernel#abort</code> will set the exit code to <code>1</code> for the current process.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># Will exit with exit code 1. </span>
+</span></span><span class=line><span class=cl><span class=nb>abort</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># You can pass a message to Kernel#abort. This message will be printed </span>
+</span></span><span class=line><span class=cl><span class=c1># to STDERR before the process exits. </span>
+</span></span><span class=line><span class=cl><span class=nb>abort</span> <span class=s2>&#34;Something went horribly wrong.&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Kernel#at_exit blocks are invoked when using Kernel#abort. </span>
+</span></span><span class=line><span class=cl><span class=nb>at_exit</span> <span class=p>{</span> <span class=nb>puts</span> <span class=s1>&#39;Last!&#39;</span> <span class=p>}</span> 
+</span></span><span class=line><span class=cl><span class=nb>abort</span> <span class=s2>&#34;Something went horribly wrong.&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=no>Something</span> <span class=n>went</span> <span class=n>horribly</span> <span class=n>wrong</span><span class=o>.</span> 
+</span></span><span class=line><span class=cl><span class=no>Last</span><span class=o>!</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><code>raise</code></li></ul><p>A different way to end a process is with an unhandled exception.</p><p>Ending process this way still invoke any <code>at_exit</code> handlers and will print the exception message and backtrace to <code>STDERR</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># Similar to abort, an unhandled exception will set the exit code to 1. </span>
+</span></span><span class=line><span class=cl><span class=k>raise</span> <span class=s1>&#39;hell&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#processes-can-fork><h4 id=processes-can-fork><span class=hanchor arialabel=Anchor># </span>Processes Can Fork</h4></a><p>Forking is one of the most powerful concepts in Unix programming.
+The <code>fork(2)</code> system call allows a running process to create new process programmatically. This new process is en exact copy of the original process.
+When forking, the process that initiates the <code>fork(2)</code> is called the <code>parent</code>, and the newly created process is called the <code>child</code>.</p><blockquote><p>The child process inherits a copy of all of the memory in use by the parent proces, as well as open file descriptors belongings to the parent process.</p></blockquote><p>Since the child process is an entirely new process, it gets its own unique <code>pid</code></p><p>The parent of the child process is, obviously, its parent process. So its <code>pid</code> is set to the pid of the processs that initiated the <code>fork(2)</code>.</p><p>The child proces inherits any open file descriptors from the parent process at the time of <code>fork(2)</code>. It&rsquo;s given the same map of the file descriptor numbers that the parent process has. In this way, the two processes can share open files, sockets, etc.</p><p>The child process inherits copy of everything that the parent process has in the main memory. In this way a process could loaded up a large code base, say a Rails app, that occupies 500MB of main mermory. Then this process can fork 2 new child processes. Each of these child processes effectivly have their own copy of that code base loaded in memory.</p><p>The call to <code>fork</code> returns nearly-instantly so we have 3 processes with each using 500MB of memory. Perfect for when you want to have multiple instances of your application loaded in memory at the same time. Because, only once process needs to load the appl and forking is fast, this method is faster than loading the app 3 times in separate instances.</p><p>The child processes would be free to modify their copy of the memory without effecting what the parent process has in memory.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=k>if</span> <span class=nb>fork</span>
+</span></span><span class=line><span class=cl>	<span class=nb>puts</span> <span class=s2>&#34;entered the if block&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl>	<span class=nb>puts</span> <span class=s2>&#34;entered the else block&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># entered the if block </span>
+</span></span><span class=line><span class=cl><span class=c1># entered the else block</span>
+</span></span></code></pre></td></tr></table></div></div><p>One call to ther <code>fork</code> method actually returns twice. Remember that <code>fork</code> create a new process. So it returns once in the calling process parent and once in the newly created process child.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>puts</span> <span class=s2>&#34;parent process pid is </span><span class=si>#{</span><span class=no>Process</span><span class=o>.</span><span class=n>pid</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=nb>fork</span> 
+</span></span><span class=line><span class=cl>	<span class=nb>puts</span> <span class=s2>&#34;entered the if block from </span><span class=si>#{</span><span class=no>Process</span><span class=o>.</span><span class=n>pid</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl>	<span class=nb>puts</span> <span class=s2>&#34;entered the else block from </span><span class=si>#{</span><span class=no>Process</span><span class=o>.</span><span class=n>pid</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>output:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>parent process is 21268
+</span></span></span><span class=line><span class=cl><span class=go>entered the if block from 21268
+</span></span></span><span class=line><span class=cl><span class=go>entered the else block from 21282
+</span></span></span></code></pre></td></tr></table></div></div><p>Now it becomes clear that the code in the if block is being excuted by the parent process, while the code in the else block is being excuted by the child process. Both the child process and the parent process will carry on excuting the code after the if construct.</p><p><strong>In the child process <code>fork</code> return <code>nil</code>. In the parent process <code>fork</code> returns the pid if the newly created child process.</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>puts</span> <span class=nb>fork</span>
+</span></span><span class=line><span class=cl><span class=mi>21423</span>
+</span></span><span class=line><span class=cl><span class=kp>nil</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#multicore-programming><h5 id=multicore-programming><span class=hanchor arialabel=Anchor># </span>Multicore programming?</h5></a><p>By making new process it means that your code is able, but not guaranteed, to be distributed accross multiple CPU cores.</p><p>However, there&rsquo;s no guarantee that stuff will be happening in parallel. On a busy system it&rsquo;s possible that all 4 of your processes are handled by the same CPU.</p><blockquote><p>fork(2) creates a new process that&rsquo;s a copy of the old process. So if a process is using 500MB of main memory, then it forks, now you have 1GB in main memory.</p><p>Do this another ten times and you can quickly exhaust main memory. This is often called a <em>fork bomb</em>. Before you turn up the concurrency make sure that you know the consequences.</p></blockquote><a href=#using-a-block><h5 id=using-a-block><span class=hanchor arialabel=Anchor># </span>Using a Block</h5></a><p>In the example above we&rsquo;ve demonstrated <code>fork</code> with an if/else construct. It&rsquo;s also possible, and more common in Ruby code, to use <code>fork</code> with a block.</p><p>When you pass a block to the <code>fork</code> method that block will be execute in the new child process, while the parent process simply skips over it. The child process exits when it&rsquo;s done excuting the block. It doesn not continue along the same code path as the parent.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=k>for</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>  <span class=c1># Code here is only executed in the child process</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Code here is only executed in the parent process</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#orphaned-processes><h4 id=orphaned-processes><span class=hanchor arialabel=Anchor># </span>Orphaned Processes</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>fork</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>	<span class=mi>5</span><span class=o>.</span><span class=n>times</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>		<span class=nb>sleep</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>		<span class=nb>puts</span> <span class=s2>&#34;I&#39;m an orphan&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=k>end</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>abort</span> <span class=s2>&#34;Parent process die...&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#abandoned-children><h5 id=abandoned-children><span class=hanchor arialabel=Anchor># </span>Abandoned Children</h5></a><p>What happens to a child process when its parent dies?</p><p><em>Nothing</em>, that is to say, the OS doesn&rsquo;t treat child processes any differently than any other processes. So, when the parent process dies the child process continues on; the parent process does not take the child down with it.</p><a href=#managing-orphans><h5 id=managing-orphans><span class=hanchor arialabel=Anchor># </span>Managing Orphans</h5></a><ul><li><code>Daemon processes</code> are long running processes that are intentionally orphaned and meant to stay running forever.</li><li>Communicationg with processes that are not attached to a terminal session. You can do this using something</li></ul><a href=#cow><h4 id=cow><span class=hanchor arialabel=Anchor># </span>CoW</h4></a><p>As metioned, <code>fork(2)</code> creates a new child process that&rsquo;s an exact copy of the parent process. This includes a copy of everything the parent process has in memory.</p><p>Physically copying all of data can be considerable overhead, so modern Unix systems employ something called <code>copy-on-write</code> sematics (CoW) to combat this.</p><p>CoW delays the actual copying on memory until it needs to be written.</p><p>So the parent process and child process will actually share the same physical data in memory until one of them need to modify it, at which point the memory will be copied so the proper separation between the two processes can be preserved.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=n>arr</span> <span class=o>=</span> <span class=o>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=o>]</span> <span class=nb>fork</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl><span class=c1># At this point the child process has been initialized. </span>
+</span></span><span class=line><span class=cl><span class=c1># Using CoW this process doesn&#39;t need to copy the arr variable, </span>
+</span></span><span class=line><span class=cl><span class=c1># since it hasn&#39;t modified any shared values it can continue reading </span>
+</span></span><span class=line><span class=cl><span class=c1># from the same memory location as the parent process. </span>
+</span></span><span class=line><span class=cl>	<span class=nb>p</span> <span class=n>arr</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=n>arr</span> <span class=o>=</span> <span class=o>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=o>]</span> <span class=nb>fork</span> <span class=k>do</span> 
+</span></span><span class=line><span class=cl><span class=c1># At this point the child process has been initialized. </span>
+</span></span><span class=line><span class=cl><span class=c1># Because of CoW the arr variable hasn&#39;t been copied yet. </span>
+</span></span><span class=line><span class=cl>	<span class=n>arr</span> <span class=o>&lt;&lt;</span> <span class=mi>4</span> 
+</span></span><span class=line><span class=cl><span class=c1># The above line of code modifies the array, so a copy of </span>
+</span></span><span class=line><span class=cl><span class=c1># the array will need to be made for this process before </span>
+</span></span><span class=line><span class=cl><span class=c1># it can modify it. The array in the parent process remains </span>
+</span></span><span class=line><span class=cl><span class=c1># unchanged. </span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>MRI&rsquo;s garbage collector uses a <code>mark-and-sweep</code> algorithm. In a nutshell this means that when the GC is invoked it must traverse the graph of live objects, and for each one the GC must <code>mark</code> it as alive.</p><p>In MRI &lt;= 1.9, this <code>mark</code> step was implemented as a modification to that object in memory. So when the GC was invoked right after a <code>fork</code>, all live objects were modified, forcing the OS to make copies of all live Ruby objects and foregoing any benefit from CoW semantics.</p><p>MRI >= 2.0 still uses a <code>mark-and-sweep</code> GC, but preserves CoW semantics by storing all of the <code>marks</code> in a small data structure in a disparate region of memory. So when the GC runs after a <code>fork</code>, this small region of memory must be copied, but the graph of live Ruby objects can be shared between parent and child until your code modifies an object.</p></blockquote><a href=#processes-can-wait><h4 id=processes-can-wait><span class=hanchor arialabel=Anchor># </span>Processes can wait</h4></a><ul><li><em>fire and forget</em> is useful when you want a child process to handle something asynchrously, but the parent process still has its own work to do.</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=n>message</span> <span class=o>=</span> <span class=s1>&#39;Good Morning&#39;</span>
+</span></span><span class=line><span class=cl><span class=n>recipient</span> <span class=o>=</span> <span class=s1>&#39;tree@mybackyard.com&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>fork</span> <span class=k>do</span> 
+</span></span><span class=line><span class=cl>	<span class=c1># In this contrived example the parent process forks a child to take </span>
+</span></span><span class=line><span class=cl>	<span class=c1># care of sending data to the stats collector. Meanwhile the parent </span>
+</span></span><span class=line><span class=cl>	<span class=c1># process has continued on with its work of sending the actual payload. </span>
+</span></span><span class=line><span class=cl>	<span class=c1># The parent process doesn&#39;t want to be slowed down with this task, and </span>
+</span></span><span class=line><span class=cl>	<span class=c1># it doesn&#39;t matter if this would fail for some reason. </span>
+</span></span><span class=line><span class=cl>	<span class=no>StatsCollector</span><span class=o>.</span><span class=n>record</span> <span class=n>message</span><span class=p>,</span> <span class=n>recipient</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span><span class=line><span class=cl><span class=c1># send message to recipient</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><code>Process.wait</code></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=nb>fork</span> <span class=k>do</span> 
+</span></span><span class=line><span class=cl>	<span class=mi>5</span><span class=o>.</span><span class=n>times</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>		<span class=nb>sleep</span> <span class=mi>1</span> 
+</span></span><span class=line><span class=cl>		<span class=nb>puts</span> <span class=s2>&#34;I am an orphan!&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=k>end</span> 
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span><span class=line><span class=cl><span class=no>Process</span><span class=o>.</span><span class=n>wait</span>
+</span></span><span class=line><span class=cl><span class=nb>abort</span> <span class=s2>&#34;Parent process died...&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>I am an orphan! 
+</span></span></span><span class=line><span class=cl><span class=go>I am an orphan! 
+</span></span></span><span class=line><span class=cl><span class=go>I am an orphan! 
+</span></span></span><span class=line><span class=cl><span class=go>I am an orphan! 
+</span></span></span><span class=line><span class=cl><span class=go>I am an orphan! 
+</span></span></span><span class=line><span class=cl><span class=go>Parent process died...
+</span></span></span></code></pre></td></tr></table></div></div><p>Control will not be returned to the terminal until all of the output has been printed.</p><p><strong><code>Process.wait</code> is a blocking call instructing the parent process to wait for one of its child processes to exit before continuing.</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># We create 3 child processes. </span>
+</span></span><span class=line><span class=cl><span class=mi>3</span><span class=o>.</span><span class=n>times</span> <span class=k>do</span> 
+</span></span><span class=line><span class=cl>	<span class=nb>fork</span> <span class=k>do</span> 
+</span></span><span class=line><span class=cl>		<span class=c1># Each one sleeps for a random amount of number less than 5 seconds. </span>
+</span></span><span class=line><span class=cl>		<span class=nb>sleep</span> <span class=nb>rand</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl>	<span class=k>end</span>
+</span></span><span class=line><span class=cl><span class=k>end</span> 
+</span></span><span class=line><span class=cl><span class=mi>3</span><span class=o>.</span><span class=n>times</span> <span class=k>do</span> 
+</span></span><span class=line><span class=cl>	<span class=c1># We wait for each child process to exit and print the pid that </span>
+</span></span><span class=line><span class=cl>	<span class=c1># gets returned. </span>
+</span></span><span class=line><span class=cl>	<span class=nb>puts</span> <span class=no>Process</span><span class=o>.</span><span class=n>wait</span> 
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#race-conditions><h5 id=race-conditions><span class=hanchor arialabel=Anchor># </span>Race Conditions</h5></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># We create two child processes. </span>
+</span></span><span class=line><span class=cl><span class=mi>2</span><span class=o>.</span><span class=n>times</span> <span class=k>do</span> 
+</span></span><span class=line><span class=cl>	<span class=nb>fork</span> <span class=k>do</span> 
+</span></span><span class=line><span class=cl>		<span class=c1># Both processes exit immediately. </span>
+</span></span><span class=line><span class=cl>		<span class=nb>abort</span> <span class=s2>&#34;Finished!&#34;</span> 
+</span></span><span class=line><span class=cl>	<span class=k>end</span> 
+</span></span><span class=line><span class=cl><span class=k>end</span> 
+</span></span><span class=line><span class=cl><span class=c1># The parent process waits for the first process, then sleeps for 5 seconds. </span>
+</span></span><span class=line><span class=cl><span class=c1># In the meantime the second child process has exited and is no </span>
+</span></span><span class=line><span class=cl><span class=c1># longer running. </span>
+</span></span><span class=line><span class=cl><span class=nb>puts</span> <span class=no>Process</span><span class=o>.</span><span class=n>wait</span> 
+</span></span><span class=line><span class=cl><span class=nb>sleep</span> <span class=mi>5</span> 
+</span></span><span class=line><span class=cl><span class=c1># The parent process asks to wait once again, and amazingly enough, the second # process&#39; exit information has been queued up and is returned here. </span>
+</span></span><span class=line><span class=cl><span class=nb>puts</span> <span class=no>Process</span><span class=o>.</span><span class=n>wait</span>
+</span></span></code></pre></td></tr></table></div></div><p>The kernel queues up information about exited processes so that parent always receives the information in order that children exited.</p><a href=#in-the-real-world-4><h5 id=in-the-real-world-4><span class=hanchor arialabel=Anchor># </span>In the real World</h5></a><ul><li><em>babysitting processes</em></li></ul><p>At the core of this pattern is the concept that you have one process that forks serveral child processes, for concurrency, and then spends ti</p><ul><li><code>waitpid(2)</code></li></ul><a href=#zoombie-process><h4 id=zoombie-process><span class=hanchor arialabel=Anchor># </span>Zoombie Process</h4></a><ul><li><code>fire and forget manner</code></li></ul><p>Kernel queues up information about child processes that have exited. So even if you <code>Process.wait</code> long after process has exited its information is still available.</p><p>The kernel will retain the status of exited child process until the parent process requests that status using <code>Process.wait</code>.
+If the parent never requests the status t hen the kernel will never <em>reap</em> that status information. So creating fire and forget child process without collecting their status information is poor use of kernel resources.</p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li>No backlinks found</li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://namtx.dev/obsidian/js/graph.43449bd0c1e2fba6f4d85a25d9cfaee8.js></script></div></div><div id=contact_buttons><footer><p>Made by Nam Tran using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2022</p><ul><li><a href=https://namtx.dev/obsidian>Home</a></li><li><a href=https://github.com/namtx>Github</a></li></ul></footer></div></div></body></html>
