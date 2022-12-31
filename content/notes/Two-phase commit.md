@@ -32,10 +32,10 @@ COMMIT;
 > What happens when user was charged but order is not created?
 
 ### Distributed  Transaction
-- [[notes/Two-phase commit]]
-- [[notes/Three phase commit]]]
-- [[notes/SAGA pattern with Orchestrator and Choreography]]
-- [[notes/Parallel Pipeline]]
+- [[Two-phase commit]]
+- [[Three phase commit]]
+- [[SAGA pattern with Orchestrator and Choreography]]
+- [[Parallel Pipeline]]
 
 ##### Crazy ideas
 - Single database

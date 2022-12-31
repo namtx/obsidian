@@ -366,6 +366,13 @@ header {
 
   & > h1 {
     font-size: 2em;
+
+    svg {
+      width: 32px;
+      min-width: 32px;
+      height: 32px;
+      margin: 0;
+    }
   }
 
   & > nav {

@@ -17,7 +17,7 @@ operandApiKey: "REPLACE-WITH-YOUR-OPERAND-API-KEY"
 description:
   Host your second brain and digital garden for free. Quartz features extremely fast full-text search,
   Wikilink support, backlinks, local graph, tags, and link previews.
-page_title: "💎 Obsidian"
+page_title: "Obsidian"
 links:
   - link_name: Github
     link: https://github.com/namtx
