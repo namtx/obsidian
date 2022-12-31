@@ -73,4 +73,4 @@ Kafka is a distributed system at heart, but it also possible to install and run 
 ##### What are brokers?
 Brokers can be thought of as the server side of Kafka.
 
-[[notes/Kafka CLI]]
+[[Kafka CLI]]

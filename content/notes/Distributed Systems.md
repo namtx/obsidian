@@ -2,4 +2,4 @@
 title: "Distributed Systems"
 ---
 
-[[notes/read-after-write]]
+[[read-after-write]]

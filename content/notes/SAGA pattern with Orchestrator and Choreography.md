@@ -8,8 +8,8 @@ title: "SAGA pattern with Orchestrator and Choreography"
 - Separation of concerns
 
 #### Cons 
-- [[notes/Single point of failure]]
-- [[notes/Bottle neck]]/Latency
+- [[Single point of failure]]
+- [[Bottle neck]]
 
 ![[notes/images/Orchestrator service.png]]
 ### Choreography: Event based
@@ -18,8 +18,8 @@ title: "SAGA pattern with Orchestrator and Choreography"
 
 #### Pros
 - No extra service / Simplicity
-- No [[notes/Single point of failure]]
-- Loose coupling / [[notes/Fault tolerance]]
+- No [[Single point of failure]]
+- Loose coupling / [[Fault tolerance]]
 
 #### Cons
 - Difficult to maintain/understand

@@ -11,7 +11,7 @@ title: "Events"
 - For example: Company data is owned and served by Monolith. Extracting all logic into a separate µS requires data to be migrated as well, since every service maintains its own datastore. Having CDC event streaming in place would allow the µS to migrate the changes to its datastore.
 - Visibility: CDC events are private messages, and hence the events must be produced to/consumed from private topics. Kafka allows configuring ACL for restricted accesses.
 #### Entity Changed Events (ECE)
-[[notes/ECEs - Entity Changed Events]]
+[[ECEs - Entity Changed Events]]
 - represent a data structure with the intent of presenting changes in a entity. This at first might sound similar to CDC, but conceptually they're different. ECE  Events define a public contract, which can be used by Foreign Bounded Contexts. They're used primarily for **Data Replication** between different systems. For the consumers that listen to ECEs, the guarantee is that they will receive the latest state of an entity, but might not receive all the intermediates states, due to #compaction.
 
 ##### How is different from CDC?
@@ -35,7 +35,7 @@ Domain events are relevant both within a bounded context and across bounded cont
 
 - "Fat" events are preferred. This is to ensure that a consumer is able to action an event without having to make a sync cal to the producer service.
 ##### CDC
-The structure of the CDC events are fixed by the [[notes/Debezium Connectors]]
+The structure of the CDC events are fixed by the [[Debezium Connectors]]
 ##### Entity Change Event
 Entity change event contain the state of the entity after the change. Optional event metadata, like `company_id` or `employee_id` (when applicable) should be included on the root level for both `changed` and `deleted` events.
 
@@ -65,7 +65,7 @@ message FooBar {
 }
 ```
 
-Entity ID must be present in the key of the [[notes/Kafka]] record in addition to the payload (to allow partitioning, ordering, and compaction). The event metadata described below should be encoded as [[notes/Kafka]] record headers. Notes, that there is no `eventName` specified neither in the message payload, nor in the metadata. Parsing event payloads is make possible by using `oneOf` type definition.
+Entity ID must be present in the key of the [[Kafka]] record in addition to the payload (to allow partitioning, ordering, and compaction). The event metadata described below should be encoded as [[Kafka]] record headers. Notes, that there is no `eventName` specified neither in the message payload, nor in the metadata. Parsing event payloads is make possible by using `oneOf` type definition.
 
 Because the event log is only guaranteed to have the latest Entity Changed Event and not the full history of events. Not all entity change events are guaranteed to be processed by all consumers. Hence, having both the previous and current state of the entity inside the entity change event can cause issues when reprocessing the messages from a compacted log or restarting a consumer after a long pause.
 When using Kafka, we must provide a way to automatically remove records that were deleted from the event log. For this, a tombstone message with null values is required. Hence, consumer should be prepared to handle those messages and should not rely on the `entity deleted` messages in the long run.
