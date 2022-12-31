@@ -25,6 +25,7 @@ async function drawGraph(baseUrl, isHome, pathColors, graphConfig) {
   // Links is mutated by d3. We want to use links later on, so we make a copy and pass that one to d3
   // Note: shallow cloning does not work because it copies over references from the original array
   const copyLinks = JSON.parse(JSON.stringify(links))
+  console.log('copyLinks', copyLinks)
 
   const neighbours = new Set()
   const wl = [curPage || "/", "__SENTINEL"]
@@ -168,7 +169,7 @@ async function drawGraph(baseUrl, isHome, pathColors, graphConfig) {
     .style("cursor", "pointer")
     .on("click", (_, d) => {
       // SPA navigation
-      window.Million.navigate(new URL(`${baseUrl}${decodeURI(d.id).replace(/\s+/g, "-")}/`), ".singlePage")
+      window.Million.navigate(new URL(`${baseUrl}/notes${decodeURI(d.id).replace(/\s+/g, "-")}/`), ".singlePage")
     })
     .on("mouseover", function (_, d) {
       d3.selectAll(".node").transition().duration(100).attr("fill", "var(--g-node-inactive)")
@@ -179,7 +180,7 @@ async function drawGraph(baseUrl, isHome, pathColors, graphConfig) {
       ])
       const neighbourNodes = d3.selectAll(".node").filter((d) => neighbours.includes(d.id))
       const currentId = d.id
-      window.Million.prefetch(new URL(`${baseUrl}${decodeURI(d.id).replace(/\s+/g, "-")}/`))
+      window.Million.prefetch(new URL(`${baseUrl}/notes${decodeURI(d.id).replace(/\s+/g, "-")}/`))
       const linkNodes = d3
         .selectAll(".link")
         .filter((d) => d.source.id === currentId || d.target.id === currentId)
