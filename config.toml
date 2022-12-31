@@ -6,6 +6,7 @@ disablePathToLower = true
 ignoreFiles = [
     "/content/templates/*",
     "/content/private/*",
+    "/content/notes/templates/*",
 ]
 summaryLength = 20
 paginate = 20
