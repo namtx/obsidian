@@ -1,7 +1,14 @@
+---
+title: "Network timning break down phases explained"
+tags:
+  - web
+  - http
+  - networking
+---
 
 ![[notes/images/Pasted image 20221231172352.png]]
 Here's more information about each of the phases you may see in the Timing tab:
-- **Queueing**: The browser queues requests when:
+- **Queuing**: The browser queues requests when:
 	- There a higher priority requests
 	- There are already six TCP connections open for this origin, which is the limit. Applies to HTTP/1.0 and HTTP/1.1 only.
 	- The browser is briefly allocating space in the disk cache
