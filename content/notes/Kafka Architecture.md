@@ -30,7 +30,7 @@ In general, core Kafka can be thought of as Scala application processes that run
 One of Kafka's keys is its usage of the OS's page cache.
 By avoiding caching in the JVM heap, the brokers can help prevent some of the issues that large heaps may have (for example, long or frequent [[Garbage Collection]] pauses)
 
-![[images/Pasted image 20230108004222.png]]
+![[notes/images/Pasted image 20230108004222.png]]
 
 Another design consideration is the access pattern of data. When new messages flood in, it is likely that the latest messages are of more interest to many consumers, which can then be served from this cache.
 Serving from a page cache instead of disk is likely faster in the most cases. Where there are exceptions, adding more RAM helps more of your workloads to fall in to the page cache.
@@ -39,7 +39,7 @@ Kafka uses its own protocol.
 
 #### The commit log
 
-![[images/Pasted image 20230108004722.png]]
+![[notes/images/Pasted image 20230108004722.png]]
 
 What makes the commit log special is its append-only nature, in which events are always added to the end.
 The persistence as a log itself for storage is a major part of what separates Kafka from other message brokers. Reading a message does not remove it from the system or exclude it from other consumers.
