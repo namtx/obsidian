@@ -1,5 +1,6 @@
 <!doctype html><html lang=en><head><meta charset=utf-8><meta name=description content="https://github.com/birdayz/kaf
-Create a new topic 1 2 3 4 5 6 7  $ kaf topic create kafka-in-actions ✅ Created topic!"><title>Kafka CLI</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://namtx.dev/icon.png><link href=https://namtx.dev/styles.6d35b443b4f220f750e7bcd3c17d1fcf.min.css rel=stylesheet><link href=https://namtx.dev/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://namtx.dev/js/darkmode.96130cf4662e948e7d494ad9fe8349bb.min.js></script>
+Single Kafka Cluster [[notes/Kafka Listeners - Explained]]
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55  version:'2'services:zookeeper:image:confluentinc/cp-zookeeper:latestenvironment:ZOOKEEPER_CLIENT_PORT:2181ZOOKEEPER_TICK_TIME:2000ports:- 22181:2181kafka-1:image:confluentinc/cp-kafka:latestdepends_on:- zookeeperports:- 29092:29092environment:KAFKA_BROKER_ID:1KAFKA_ZOOKEEPER_CONNECT:zookeeper:2181KAFKA_ADVERTISED_LISTENERS:PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:29092KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXTKAFKA_INTER_BROKER_LISTENER_NAME:PLAINTEXT# KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1KAFKA_DEFAULT_REPLICATION_FACTOR:3KAFKA_NUM_PARTITIONS:3kafka-2:image:confluentinc/cp-kafka:latestdepends_on:- zookeeperports:- 29093:29093environment:KAFKA_BROKER_ID:2KAFKA_ZOOKEEPER_CONNECT:zookeeper:2181KAFKA_ADVERTISED_LISTENERS:PLAINTEXT://kafka-2:9093,PLAINTEXT_HOST://localhost:29093KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXTKAFKA_INTER_BROKER_LISTENER_NAME:PLAINTEXT# KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1KAFKA_DEFAULT_REPLICATION_FACTOR:3KAFKA_NUM_PARTITIONS:3kafka-3:image:confluentinc/cp-kafka:latestdepends_on:- zookeeperports:- 29094:29094environment:KAFKA_BROKER_ID:3KAFKA_ZOOKEEPER_CONNECT:zookeeper:2181KAFKA_ADVERTISED_LISTENERS:PLAINTEXT://kafka-3:9094,PLAINTEXT_HOST://localhost:29094KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXTKAFKA_INTER_BROKER_LISTENER_NAME:PLAINTEXT# KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1KAFKA_DEFAULT_REPLICATION_FACTOR:3KAFKA_NUM_PARTITIONS:3  Config cluster for kaf 1  kaf config add-cluster local -b localhost:29092   List all nodes 1 2 3 4 5  $ kaf node ls ID ADDRESS CONTROLLER 1 localhost:29092 true 2 localhost:29093 false 3 localhost:29094 false   Create a new topic 1 2 3 4 5 6 7  $ kaf topic create kinaction_helloworld ✅ Created topic!"><title>Kafka CLI</title><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" type=image/png href=https://namtx.dev/icon.png><link href=https://namtx.dev/styles.6d35b443b4f220f750e7bcd3c17d1fcf.min.css rel=stylesheet><link href=https://namtx.dev/styles/_light_syntax.86a48a52faebeaaf42158b72922b1c90.min.css rel=stylesheet id=theme-link><script src=https://namtx.dev/js/darkmode.96130cf4662e948e7d494ad9fe8349bb.min.js></script>
 <script src=https://namtx.dev/js/util.9825137f5e7825e8553c68ce39ac9e44.min.js></script>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
 <script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous></script>
@@ -10,31 +11,198 @@ Create a new topic 1 2 3 4 5 6 7  $ kaf topic create kafka-in-actions ✅ Create
 <script src=https://namtx.dev/js/code-title.b35124ad8db0ba37162b886afb711cbc.min.js></script>
 <script src=https://namtx.dev/js/clipboard.c20857734e53a3fb733b7443879efa61.min.js></script>
 <script src=https://namtx.dev/js/callouts.7723cac461d613d118ee8bb8216b9838.min.js></script>
-<script>const BASE_URL="https://namtx.dev",fetchData=Promise.all([fetch("https://namtx.dev/indices/linkIndex.310f331789e0c48725eec3f274a59101.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://namtx.dev/indices/contentIndex.f38a846c48ff31759d68968665f478fc.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://namtx.dev",!0,!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://namtx.dev",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
+<script>const BASE_URL="https://namtx.dev",fetchData=Promise.all([fetch("https://namtx.dev/indices/linkIndex.406cdb0862d8bceacf912a9fdace3592.min.json").then(e=>e.json()).then(e=>({index:e.index,links:e.links})),fetch("https://namtx.dev/indices/contentIndex.ef53308247e3a84c3fc03a8ffbf0f987.min.json").then(e=>e.json())]).then(([{index:e,links:t},n])=>({index:e,links:t,content:n})),render=()=>{const e=new URL(BASE_URL),t=e.pathname,n=window.location.pathname,s=t==n;addCopyButtons(),addTitleToCodeBlocks(),addCollapsibleCallouts(),initPopover("https://namtx.dev",!0,!0);const o=document.getElementById("footer");if(o){const e=document.getElementById("graph-container");if(!e)return requestAnimationFrame(render);e.textContent="";const t=s&&!1;drawGraph("https://namtx.dev",t,[{"/moc":"#4388cc"}],t?{centerForce:1,depth:-1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.5,linkDistance:1,opacityScale:3,repelForce:1,scale:1.4}:{centerForce:1,depth:1,enableDrag:!0,enableLegend:!1,enableZoom:!0,fontSize:.6,linkDistance:1,opacityScale:3,repelForce:2,scale:1.2})}},init=(e=document)=>{addCopyButtons(),addTitleToCodeBlocks(),renderMathInElement(e.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],macros:{'’':"'"},throwOnError:!1})}</script><script type=module>
     import { attachSPARouting } from "https:\/\/namtx.dev\/js\/router.9d4974281069e9ebb189f642ae1e3ca2.min.js"
     attachSPARouting(init, render)
   </script></head><script async src="https://www.googletagmanager.com/gtag/js?id=G-XYFD95KB4J"></script>
 <script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-XYFD95KB4J",{anonymize_ip:!1})}</script><body><div id=search-container><div id=search-space><input autocomplete=off id=search-bar name=search type=text aria-label=Search placeholder="Search for something..."><div id=results-container></div></div></div><script src=https://cdn.jsdelivr.net/npm/flexsearch@0.7.21/dist/flexsearch.bundle.js integrity="sha256-i3A0NZGkhsKjVMzFxv3ksk0DZh3aXqu0l49Bbh0MdjE=" crossorigin=anonymous defer></script>
 <script defer src=https://namtx.dev/js/full-text-search.24827f874defbbc6d529926cbfcfb493.min.js></script><div class=singlePage><header><h1 id=page-title><a href=https://namtx.dev><svg viewBox="0 0 100 100" width="30" height="30"><defs><linearGradient id="a" x1="82.85" y1="30.41" x2="51.26" y2="105.9" gradientTransform="matrix(1, 0, 0, -1, -22.41, 110.97)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6c56cc"/><stop offset="1" stop-color="#9785e5"/></linearGradient></defs><polygon points="44.61 0 12.91 17.52 0 45.45 19.57 90.47 47.35 100 52.44 89.8 63 26.39 44.61 0" fill="#34208c"/><polygon points="63 26.39 43.44 14.41 16.43 35.7 47.35 100 52.44 89.8 63 26.39" fill="url(#a)"/><polygon points="63 26.39 63 26.39 44.61 0 43.44 14.41 63 26.39" fill="#af9ff4"/><polygon points="43.44 14.41 44.61 0 12.91 17.52 16.43 35.7 43.44 14.41" fill="#4a37a0"/><polygon points="16.43 35.7 19.57 90.47 47.35 100 16.43 35.7" fill="#4a37a0"/></svg>Obsidian</a></h1><div class=spacer></div><div id=search-icon><p>Search</p><svg tabindex="0" aria-labelledby="title desc" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title id="title">Search Icon</title><desc id="desc">Icon to open search</desc><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/></g></svg></div><div class=darkmode><input class=toggle id=darkmode-toggle type=checkbox tabindex=-1>
 <label id=toggle-label-light for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="dayIcon" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35"><title>Light Mode</title><path d="M6 17.5C6 16.672 5.328 16 4.5 16h-3C.672 16 0 16.672.0 17.5S.672 19 1.5 19h3C5.328 19 6 18.328 6 17.5zM7.5 26c-.414.0-.789.168-1.061.439l-2 2C4.168 28.711 4 29.086 4 29.5 4 30.328 4.671 31 5.5 31c.414.0.789-.168 1.06-.44l2-2C8.832 28.289 9 27.914 9 27.5 9 26.672 8.329 26 7.5 26zm10-20C18.329 6 19 5.328 19 4.5v-3C19 .672 18.329.0 17.5.0S16 .672 16 1.5v3C16 5.328 16.671 6 17.5 6zm10 3c.414.0.789-.168 1.06-.439l2-2C30.832 6.289 31 5.914 31 5.5 31 4.672 30.329 4 29.5 4c-.414.0-.789.168-1.061.44l-2 2C26.168 6.711 26 7.086 26 7.5 26 8.328 26.671 9 27.5 9zM6.439 8.561C6.711 8.832 7.086 9 7.5 9 8.328 9 9 8.328 9 7.5c0-.414-.168-.789-.439-1.061l-2-2C6.289 4.168 5.914 4 5.5 4 4.672 4 4 4.672 4 5.5c0 .414.168.789.439 1.06l2 2.001zM33.5 16h-3c-.828.0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5h3c.828.0 1.5-.672 1.5-1.5S34.328 16 33.5 16zM28.561 26.439C28.289 26.168 27.914 26 27.5 26c-.828.0-1.5.672-1.5 1.5.0.414.168.789.439 1.06l2 2C28.711 30.832 29.086 31 29.5 31c.828.0 1.5-.672 1.5-1.5.0-.414-.168-.789-.439-1.061l-2-2zM17.5 29c-.829.0-1.5.672-1.5 1.5v3c0 .828.671 1.5 1.5 1.5s1.5-.672 1.5-1.5v-3C19 29.672 18.329 29 17.5 29zm0-22C11.71 7 7 11.71 7 17.5S11.71 28 17.5 28 28 23.29 28 17.5 23.29 7 17.5 7zm0 18c-4.136.0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5 7.5 3.364 7.5 7.5S21.636 25 17.5 25z"/></svg></label><label id=toggle-label-dark for=darkmode-toggle tabindex=-1><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nightIcon" viewBox="0 0 100 100" style="enable-background='new 0 0 100 100'"><title>Dark Mode</title><path d="M96.76 66.458c-.853-.852-2.15-1.064-3.23-.534-6.063 2.991-12.858 4.571-19.655 4.571C62.022 70.495 50.88 65.88 42.5 57.5 29.043 44.043 25.658 23.536 34.076 6.47c.532-1.08.318-2.379-.534-3.23-.851-.852-2.15-1.064-3.23-.534-4.918 2.427-9.375 5.619-13.246 9.491-9.447 9.447-14.65 22.008-14.65 35.369.0 13.36 5.203 25.921 14.65 35.368s22.008 14.65 35.368 14.65c13.361.0 25.921-5.203 35.369-14.65 3.872-3.871 7.064-8.328 9.491-13.246C97.826 68.608 97.611 67.309 96.76 66.458z"/></svg></label></div></header><article><h1>Kafka CLI</h1><p class=meta>Last updated
-Dec 31, 2022</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><ol><li></li></ol></li></ol></nav></details></aside><p><a href=https://github.com/birdayz/kaf rel=noopener>https://github.com/birdayz/kaf</a></p><a href=#create-a-new-topic><h4 id=create-a-new-topic><span class=hanchor arialabel=Anchor># </span>Create a new topic</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+Jan 7, 2023</p><ul class=tags></ul><aside class=mainTOC><details><summary>Table of Contents</summary><nav id=TableOfContents><ol><li><ol><li></li></ol></li></ol></nav></details></aside><p><a href=https://github.com/birdayz/kaf rel=noopener>https://github.com/birdayz/kaf</a></p><a href=#single-kafka-cluster><h5 id=single-kafka-cluster><span class=hanchor arialabel=Anchor># </span>Single Kafka Cluster</h5></a><p><a href=/notes/Kafka-Listeners-Explained rel=noopener class=internal-link data-src=/notes/Kafka-Listeners-Explained>Kafka Listeners - Explained</a></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;2&#39;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>zookeeper</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>confluentinc/cp-zookeeper:latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ZOOKEEPER_CLIENT_PORT</span><span class=p>:</span><span class=w> </span><span class=m>2181</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>ZOOKEEPER_TICK_TIME</span><span class=p>:</span><span class=w> </span><span class=m>2000</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=m>22181</span><span class=p>:</span><span class=m>2181</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>kafka-1</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>confluentinc/cp-kafka:latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>depends_on</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>zookeeper</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=m>29092</span><span class=p>:</span><span class=m>29092</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_BROKER_ID</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_ZOOKEEPER_CONNECT</span><span class=p>:</span><span class=w> </span><span class=l>zookeeper:2181</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_ADVERTISED_LISTENERS</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:29092</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_INTER_BROKER_LISTENER_NAME</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=c># KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_DEFAULT_REPLICATION_FACTOR</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_NUM_PARTITIONS</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>kafka-2</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>confluentinc/cp-kafka:latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>depends_on</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>zookeeper</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=m>29093</span><span class=p>:</span><span class=m>29093</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_BROKER_ID</span><span class=p>:</span><span class=w> </span><span class=m>2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_ZOOKEEPER_CONNECT</span><span class=p>:</span><span class=w> </span><span class=l>zookeeper:2181</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_ADVERTISED_LISTENERS</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT://kafka-2:9093,PLAINTEXT_HOST://localhost:29093</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_INTER_BROKER_LISTENER_NAME</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=c># KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_DEFAULT_REPLICATION_FACTOR</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_NUM_PARTITIONS</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>kafka-3</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>confluentinc/cp-kafka:latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>depends_on</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>zookeeper</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=m>29094</span><span class=p>:</span><span class=m>29094</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_BROKER_ID</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_ZOOKEEPER_CONNECT</span><span class=p>:</span><span class=w> </span><span class=l>zookeeper:2181</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_ADVERTISED_LISTENERS</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT://kafka-3:9094,PLAINTEXT_HOST://localhost:29094</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_INTER_BROKER_LISTENER_NAME</span><span class=p>:</span><span class=w> </span><span class=l>PLAINTEXT</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=c># KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_DEFAULT_REPLICATION_FACTOR</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>KAFKA_NUM_PARTITIONS</span><span class=p>:</span><span class=w> </span><span class=m>3</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><a href=#config-cluster-for-kaf><h4 id=config-cluster-for-kaf><span class=hanchor arialabel=Anchor># </span>Config cluster for kaf</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>kaf config add-cluster <span class=nb>local</span> -b localhost:29092
+</span></span></code></pre></td></tr></table></div></div><a href=#list-all-nodes><h4 id=list-all-nodes><span class=hanchor arialabel=Anchor># </span>List all nodes</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>$ kaf node ls
+</span></span><span class=line><span class=cl>ID    ADDRESS           CONTROLLER
+</span></span><span class=line><span class=cl><span class=m>1</span>     localhost:29092   <span class=nb>true</span>
+</span></span><span class=line><span class=cl><span class=m>2</span>     localhost:29093   <span class=nb>false</span>
+</span></span><span class=line><span class=cl><span class=m>3</span>     localhost:29094   <span class=nb>false</span>
+</span></span></code></pre></td></tr></table></div></div><a href=#create-a-new-topic><h4 id=create-a-new-topic><span class=hanchor arialabel=Anchor># </span>Create a new topic</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kaf topic create kafka-in-actions
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kaf topic create kinaction_helloworld
 </span></span><span class=line><span class=cl> 
 </span></span><span class=line><span class=cl>✅ Created topic!
-</span></span><span class=line><span class=cl>      Topic Name:            kafka-in-actions
+</span></span><span class=line><span class=cl>      Topic Name:            kinaction_helloworld
 </span></span><span class=line><span class=cl>      Partitions:            -1
 </span></span><span class=line><span class=cl>      Replication Factor:    1
 </span></span><span class=line><span class=cl>      Cleanup Policy:        delete
 </span></span></code></pre></td></tr></table></div></div><a href=#list-all-topics><h4 id=list-all-topics><span class=hanchor arialabel=Anchor># </span>List all topics</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>$ kaf topics
-</span></span><span class=line><span class=cl>NAME               PARTITIONS   REPLICAS
-</span></span><span class=line><span class=cl>kafka-in-actions   1            1
-</span></span></code></pre></td></tr></table></div></div></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li><a href=/notes/Kafka-in-Action-Book/ data-ctx="Kafka CLI" data-src=/notes/Kafka-in-Action-Book class=internal-link>Kafka in Action Book</a></li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://namtx.dev/js/graph.43449bd0c1e2fba6f4d85a25d9cfaee8.js></script></div></div><div id=contact_buttons><footer><p>Made by Nam Tran using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2022</p><ul><li><a href=https://namtx.dev>Home</a></li><li><a href=https://github.com/namtx>Github</a></li></ul></footer></div></div></body></html>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>$ kaf topics
+</span></span><span class=line><span class=cl>NAME                   PARTITIONS   REPLICAS
+</span></span><span class=line><span class=cl>kinaction_helloworld   <span class=m>3</span>            <span class=m>3</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>Partitions - determines how many parts we want the topic to be split into.</li><li>replication factor - for each partition we want x replicas, these copies are a crucial part of our design to improve availability and fault tolerance</li></ul><a href=#describe-the-topic><h4 id=describe-the-topic><span class=hanchor arialabel=Anchor># </span>Describe the topic</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>$ kaf topic describe kinaction_helloworld
+</span></span><span class=line><span class=cl>Name:        kinaction_helloworld
+</span></span><span class=line><span class=cl>Internal:    <span class=nb>false</span>
+</span></span><span class=line><span class=cl>Compacted:   <span class=nb>false</span>
+</span></span><span class=line><span class=cl>Partitions:
+</span></span><span class=line><span class=cl>  Partition  High Watermark  Leader  Replicas  ISR
+</span></span><span class=line><span class=cl>  ---------  --------------  ------  --------  ---
+</span></span><span class=line><span class=cl>  <span class=m>0</span>          <span class=m>0</span>               <span class=m>2</span>       <span class=o>[</span><span class=m>1</span> <span class=m>2</span> 3<span class=o>]</span>   <span class=o>[</span><span class=m>1</span> <span class=m>2</span> 3<span class=o>]</span>
+</span></span><span class=line><span class=cl>  <span class=m>1</span>          <span class=m>0</span>               <span class=m>3</span>       <span class=o>[</span><span class=m>1</span> <span class=m>2</span> 3<span class=o>]</span>   <span class=o>[</span><span class=m>1</span> <span class=m>2</span> 3<span class=o>]</span>
+</span></span><span class=line><span class=cl>  <span class=m>2</span>          <span class=m>0</span>               <span class=m>1</span>       <span class=o>[</span><span class=m>1</span> <span class=m>2</span> 3<span class=o>]</span>   <span class=o>[</span><span class=m>1</span> <span class=m>2</span> 3<span class=o>]</span>
+</span></span><span class=line><span class=cl>Summed HighWatermark:  <span class=m>0</span>
+</span></span><span class=line><span class=cl>Config:
+</span></span><span class=line><span class=cl>  Name            Value   ReadOnly  Sensitive
+</span></span><span class=line><span class=cl>  ----            -----   --------  ---------
+</span></span><span class=line><span class=cl>  cleanup.policy  delete  <span class=nb>false</span>     <span class=nb>false</span>
+</span></span></code></pre></td></tr></table></div></div><p>#ISR stands for in-sync replicas. In-sync replica show which brokers are current and not lagging behind the leader.</p><p><img src="/notes/images/Pasted image 20230107224651.png" width=auto></p><p>There is a configuration to enable or disable the auto-creation of topics.
+However, it is usually best to control the creation of topics as a specific action because we do not want new topics randomly show up if someone mistypes a topic name once or twice or to be recreated due to producer retries.</p><a href=#produce-message-to-broker><h4 id=produce-message-to-broker><span class=hanchor arialabel=Anchor># </span>Produce message to broker</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>$ <span class=nb>echo</span> <span class=s2>&#34;test&#34;</span> <span class=p>|</span> kaf produce kinaction_helloworld
+</span></span><span class=line><span class=cl>Sent record to partition <span class=m>0</span> at offset 0.
+</span></span></code></pre></td></tr></table></div></div><a href=#consume-message><h4 id=consume-message><span class=hanchor arialabel=Anchor># </span>Consume message</h4></a><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>$ kaf consume kinaction_helloworld
+</span></span><span class=line><span class=cl>Partition:   <span class=m>0</span>
+</span></span><span class=line><span class=cl>Offset:      <span class=m>0</span>
+</span></span><span class=line><span class=cl>Timestamp:   2023-01-07 23:21:03.6 +0700 +07
+</span></span><span class=line><span class=cl><span class=nb>test</span>
+</span></span></code></pre></td></tr></table></div></div><p><a href=/notes/Kafka-Architecture rel=noopener class=internal-link data-src=/notes/Kafka-Architecture>Kafka Architecture</a></p></article><hr><div class=page-end id=footer><div class=backlinks-container><h3>Backlinks</h3><ul class=backlinks><li><a href=/notes/Kafka-in-Action-Book/ data-ctx="Kafka CLI" data-src=/notes/Kafka-in-Action-Book class=internal-link>Kafka in Action Book</a></li></ul></div><div><script src=https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js integrity="sha256-+7jaYCp29O1JusNWHaYtgUn6EhuP0VaFuswhNV06MyI=" crossorigin=anonymous></script><h3>Interactive Graph</h3><div id=graph-container></div><style>:root{--g-node:var(--secondary);--g-node-active:var(--primary);--g-node-inactive:var(--visited);--g-link:var(--outlinegray);--g-link-active:#5a7282}</style><script src=https://namtx.dev/js/graph.43449bd0c1e2fba6f4d85a25d9cfaee8.js></script></div></div><div id=contact_buttons><footer><p>Made by Nam Tran using <a href=https://github.com/jackyzha0/quartz>Quartz</a>, © 2023</p><ul><li><a href=https://namtx.dev>Home</a></li><li><a href=https://github.com/namtx>Github</a></li></ul></footer></div></div></body></html>
