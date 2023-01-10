@@ -1,0 +1,1 @@
+https://personio.atlassian.net/wiki/spaces/EO/pages/3372941313/EMP+Monolith+table+columns+mapping+to+Person+and+Employment
